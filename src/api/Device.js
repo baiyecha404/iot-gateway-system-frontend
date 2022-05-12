@@ -231,6 +231,19 @@ const getDevicePolicies = (device_id) => {
     })
 }
 
+const getDeviceMessages = (device_id) => {
+    return axios.get(`${API_URL}/gateway/devices/${device_id}/attributes/messages`, {
+        headers: AuthService.getAuthHeader()
+    }).then(resp => {
+        if (resp.data.result) {
+            return { result: resp.data.result }
+        }
+    }).catch(err => {
+        console.log(err);
+        return { err: err.message }
+    })
+}
+
 
 // eslint-disable-next-line import/no-anonymous-default-export
 export default {
@@ -248,5 +261,6 @@ export default {
     updateDeviceAttribute,
     deleteDeviceAttribute,
     getDeviceConnections,
-    getDevicePolicies
+    getDevicePolicies,
+    getDeviceMessages
 }

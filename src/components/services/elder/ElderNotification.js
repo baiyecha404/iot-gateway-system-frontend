@@ -1,7 +1,20 @@
-import React from "react";
+import React, { useState, useContext } from "react";
+import { MessageContext } from "../../DashBoard";
 import { Card, CardContent, Box, Typography, Switch, Divider } from "@mui/material";
 
 export default function ElderNotification() {
+    const { setSuccess } = useContext(MessageContext);
+    const [checked, setChecked] = useState(true);
+
+    const handleNotification = (event) => {
+        setChecked(!checked);
+        if (checked) {
+            setSuccess("Successfully enable message notification");
+        } else {
+            setSuccess("Successfully disable message notification");
+        }
+    }
+
 
     return (
         <React.Fragment>
@@ -17,7 +30,7 @@ export default function ElderNotification() {
                             }}
                         >
                             <Typography
-                                sx={{ m: 1 , mr:5 }}
+                                sx={{ m: 1, mr: 5 }}
                                 variant="h6"
                             >
                                 Phone notifications
@@ -30,14 +43,14 @@ export default function ElderNotification() {
                             </Typography>
                             <Box sx={{ m: 1 }}>
                                 <Switch
-                                    checked={true}
+                                    onChange={handleNotification}
                                 />
                             </Box>
                         </Box>
                     </Box>
                     <Divider />
                     <Box>
-                    <Box
+                        <Box
                             sx={{
                                 alignItems: 'center',
                                 display: 'flex',
@@ -46,7 +59,7 @@ export default function ElderNotification() {
                             }}
                         >
                             <Typography
-                                sx={{ m: 1, mr:9 }}
+                                sx={{ m: 1, mr: 9 }}
                                 variant="h6"
                             >
                                 Device Updates
@@ -58,7 +71,9 @@ export default function ElderNotification() {
                                 开启短信通知，以收到设备更新
                             </Typography>
                             <Box sx={{ m: 1 }}>
-                                <Switch/>
+                                <Switch
+                                    onChange={() => { setSuccess("Update Successful") }}
+                                />
                             </Box>
                         </Box>
                     </Box>

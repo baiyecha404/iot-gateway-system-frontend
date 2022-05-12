@@ -7,6 +7,8 @@ import {
 } from "@mui/material";
 import SearchIcon from '@mui/icons-material/Search';
 import DownloadIcon from '@mui/icons-material/Download';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import CancelRoundedIcon from '@mui/icons-material/CancelRounded';
 import ActionMenu from "./ActionMenu";
 import DeviceService from "../../api/Device";
 import Utils from '../../utils/Utils';
@@ -204,13 +206,24 @@ export default function DeviceList() {
                                                         {device.created_at}
                                                     </TableCell>
                                                     <TableCell>
-                                                        <Chip
+                                                        {device.status === "running" ? (
+                                                            <Chip
+                                                                icon={<CheckCircleIcon color="success" />}
+                                                                label={
+                                                                    <Typography variant="body2" fontWeight="bold">{device.status}</Typography>
+                                                                }
+                                                                color={"success"}
+                                                                variant="outlined"
+                                                            />
+                                                        ) : <Chip
+                                                            icon={<CancelRoundedIcon color="error" />}
                                                             label={
                                                                 <Typography variant="body2" fontWeight="bold">{device.status}</Typography>
                                                             }
-                                                            color={device.status === "running" ? "success" : "error"}
+                                                            color={"error"}
                                                             variant="outlined"
                                                         />
+                                                        }
                                                     </TableCell>
                                                     <TableCell>
                                                         <ActionMenu

@@ -26,6 +26,7 @@ export default function ChannelInfo(props) {
                 setShouldUpdate(false);
             })
         }
+        return () => setShouldUpdate(false);
     }, [channelId, shouldUpdate])
 
 

@@ -5,10 +5,13 @@ import {
     TableHead, TableRow, TableCell, Checkbox, TableBody, TablePagination, Divider, Link, IconButton,
     Chip
 } from "@mui/material";
+import { red } from "@mui/material/colors";
 import DownloadIcon from '@mui/icons-material/Download';
 import SearchIcon from '@mui/icons-material/Search';
 import Utils from "../../utils/Utils";
-import MoreIcon from '@mui/icons-material/MoreVert';
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import ElderService from "../../api/Elder";
 import AuthService from '../../api/Auth';
 
@@ -24,7 +27,7 @@ export default function ElderCaring() {
 
     useEffect(() => {
         setIsAdmin(AuthService.checkAdmin());
-    }, [])    
+    }, [])
 
     useEffect(() => {
         ElderService.getElders().then(resp => {
@@ -233,14 +236,26 @@ export default function ElderCaring() {
                                                     {renderStatus(elder.status)}
                                                 </TableCell>
                                                 <TableCell>
-                                                    <IconButton
-                                                        size="large"
-                                                        aria-label="display more actions"
-                                                        edge="end"
-                                                        color="inherit"
-                                                    >
-                                                        <MoreIcon />
-                                                    </IconButton>
+                                                    <Box sx={{
+                                                        alignItems: 'center',
+                                                        display: 'flex',
+                                                        justifyContent: 'flex-start',
+                                                        flexWrap: 'wrap',
+                                                    }}>
+                                                        <IconButton
+                                                            onClick={e => navigate(`/elder-caring/${elder.id}/edit`)}
+                                                        >
+                                                            <EditIcon fontSize="small" />
+                                                        </IconButton>
+                                                        <IconButton
+                                                            onClick={e => navigate(`/elder-caring/${elder.id}/info`)}
+                                                        >
+                                                            <ArrowForwardIcon fontSize="small" />
+                                                        </IconButton>
+                                                        <IconButton >
+                                                            <DeleteIcon fontSize="small" sx={{ color: red[700] }} />
+                                                        </IconButton>
+                                                    </Box>
                                                 </TableCell>
                                             </TableRow>
                                         ))}

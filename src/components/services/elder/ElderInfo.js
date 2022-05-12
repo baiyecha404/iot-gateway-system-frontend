@@ -1,20 +1,15 @@
-import React, { useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     Card, CardHeader, CardContent, List, ListItem, ListItemText, Typography, Divider,
-    Box, Table, TableHead, TableRow, TableCell, TableBody, Chip, Link
+    Table, TableHead, TableRow, TableCell, TableBody, Chip, Link, Button
 } from '@mui/material';
-import ElderHealth from './ElderHealth';
+//import ElderHealth from './ElderHealth';
 import ElderService from '../../../api/Elder';
+import ElderBindDevice from './ElderBindDevice';
 
 export default function ElderInfo(props) {
-    const { elderId, info } = props;
-
-
-    const devices = [
-        { "id": "72936a15-c8b8-4f00-8537-c0a09bd10b51", "name": "智能手表", "label": "智能 定位", "status": "Active" },
-        { "id": "72296a15-c8b8-4f00-9537-c0a09bd10b55", "name": "智能监控", "label": "监控", "status": "Active" },
-    ];
-
+    const { elderId, info, devices, update, setUpdate } = props;
+    const [open, setOpen] = useState(false);
 
     return (
         <React.Fragment>
@@ -47,7 +42,7 @@ export default function ElderInfo(props) {
                     </List>
                 </CardContent>
             </Card>
-            <Card sx={{ my: 3 }}>
+            {/* <Card sx={{ my: 3 }}>
                 <CardHeader
                     title="健康状况"
                 />
@@ -55,10 +50,20 @@ export default function ElderInfo(props) {
                 <CardContent>
                     <ElderHealth />
                 </CardContent>
-            </Card>
+            </Card> */}
             <Card sx={{ my: 3 }}>
                 <CardHeader
                     title="绑定设备"
+                    action={
+                        <Button
+                        color="primary"
+                        variant="contained"
+                        sx={{ mr: 1 }}
+                        onClick={e => setOpen(true)}
+                    >
+                        绑定设备
+                    </Button>
+                    }
                 />
                 <Divider />
                 <Table sx={{ minWidth: 650 }}>
@@ -85,7 +90,7 @@ export default function ElderInfo(props) {
                                     <Chip label={device.label}></Chip>
                                 </TableCell>
                                 <TableCell align="right">
-                                    <Chip color='success' label={
+                                    <Chip color={device.status === "running" ? "success": "error"} label={
                                         <Typography variant='body2' fontWeight="bold">{device.status}</Typography>
                                     }>
                                     </Chip>
@@ -95,6 +100,13 @@ export default function ElderInfo(props) {
                     </TableBody>
                 </Table>
             </Card>
+            {open && <ElderBindDevice
+                elderId={elderId}
+                devices={devices}
+                open={open}
+                setOpen={setOpen}
+                setUpdate={setUpdate}
+            />}
         </React.Fragment>
     )
 }

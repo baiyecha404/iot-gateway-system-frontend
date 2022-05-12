@@ -63,7 +63,8 @@ const adminVerify = (code) => {
             localStorage.setItem("user_id", JSON.stringify(resp.data.user_id));
         }
 
-        localStorage.setItem("role", "admin")
+        localStorage.setItem("role", "admin");
+        localStorage.removeItem("user_token");
         return true;
     }).catch(err => {
         console.log(err);

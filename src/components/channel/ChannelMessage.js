@@ -11,6 +11,7 @@ import DevicesIcon from '@mui/icons-material/Devices';
 import MoreTimeOutlinedIcon from '@mui/icons-material/MoreTimeOutlined';
 import ChannelService from '../../api/Channel';
 import DeviceService from '../../api/Device';
+import Utils from "../../utils/Utils";
 
 export default function ChannelMessage(props) {
     const { channelId } = props;
@@ -19,7 +20,7 @@ export default function ChannelMessage(props) {
     const [isSelected, setIsSelected] = useState("");
     const [dialogOpen, setDialogOpen] = useState(false);
     const [deviceAttributes, setDeviceAttributes] = useState([]);
-    const [senders, setSenders] = useState([]);
+    const [senders, setSenders] = useState(["all"]);
     const [connections, setConnections] = useState([])
     const [shouldUpdate, setShouldUpdate] = useState(true);
     const [sender, setSender] = useState("all");
@@ -54,13 +55,9 @@ export default function ChannelMessage(props) {
     }, [channelId, shouldUpdate])
 
     useEffect(() => {
-        const groupBy = function (xs, key) {
-            return xs.reduce((rv, x) => {
-                (rv[x[key]] = rv[x[key]] || []).push(x);
-                return rv;
-            }, {});
-        };
-        const allSenders = Object.keys(groupBy(messages, "sender")).concat(["all"])
+        const allSenders = Object
+            .keys(Utils.groupBy(messages, "sender"))
+            .concat(senders)
         setSenders(allSenders)
     }, [messages])
 

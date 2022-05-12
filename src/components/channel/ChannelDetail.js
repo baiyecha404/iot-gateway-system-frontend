@@ -19,7 +19,6 @@ export default function ChannelDetail(props) {
     const { channelId } = props;
     const [openDialog, setOpenDialog] = useState(false);
     const [currentTab, setCurrentTab] = useState('info');
-    const [shouldUpdate, setShouldUpdate] = useState(true);
     const navigate = useNavigate()
     const { tab } = useParams();
 

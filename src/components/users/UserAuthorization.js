@@ -46,6 +46,8 @@ export default function UserAuthorization(props) {
             setShouldUpdate(true)
         })
     };
+
+    
     return (
         <React.Fragment>
             <Table>

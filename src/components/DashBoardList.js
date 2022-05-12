@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { ListItemButton, ListItemIcon, ListItemText, Divider,  Collapse, List } from '@mui/material';
+import { ListItemButton, ListItemIcon, ListItemText, Divider, Collapse, List } from '@mui/material';
 import HomeIcon from '@mui/icons-material/Home';
 import AccountBoxIcon from '@mui/icons-material/AccountBox';
 import DeviceHubIcon from '@mui/icons-material/DeviceHub';
@@ -19,6 +19,7 @@ export default function ListItems(props) {
     const settingsEl = useRef(null);
     const devicesEl = useRef(null);
     const channelsEl = useRef(null);
+    const elderEl = useRef(null);
     const [openDeviceList, setOpenDeviceList] = useState(false);
     const navigate = useNavigate();
 
@@ -38,7 +39,7 @@ export default function ListItems(props) {
                 if (page !== "settings") {
                     navigate('/settings', { replace: true })
                 }
-            }  else if (devicesEl.current && devicesEl.current.contains(event.target)) {
+            } else if (devicesEl.current && devicesEl.current.contains(event.target)) {
                 if (page !== "devices") {
                     navigate('/devices', { replace: true })
                 }
@@ -46,7 +47,11 @@ export default function ListItems(props) {
                 if (page !== "channels") {
                     navigate('/channels', { replace: true })
                 }
-            } 
+            } else if (elderEl.current && elderEl.current.contains(event.target)) {
+                if (page !== "elder-caring") {
+                    navigate('/elder-caring', { replace: true })
+                }
+            }
         } else {
             changeOpen(true);
         }
@@ -105,6 +110,12 @@ export default function ListItems(props) {
                     </ListItemButton>
                 </List>
             </Collapse>
+            <ListItemButton ref={elderEl} onClick={handlePageClick}>
+                <ListItemIcon>
+                    <DevicesIcon sx={{ fontSize: 30 }} />
+                </ListItemIcon>
+                <ListItemText primary="Elder Caring" />
+            </ListItemButton>
             <Divider />
         </React.Fragment>
     )

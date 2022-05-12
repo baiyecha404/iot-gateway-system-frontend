@@ -155,6 +155,9 @@ export default function ChannelList(props) {
                                         <TableCell sortDirection="desc">
                                             Owner
                                         </TableCell>
+                                        <TableCell>
+                                            Connections
+                                        </TableCell>
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
@@ -188,6 +191,9 @@ export default function ChannelList(props) {
                                                 </TableCell>
                                                 <TableCell>
                                                     {channel.owner}
+                                                </TableCell>
+                                                <TableCell>
+                                                    {channel.connections}
                                                 </TableCell>
                                             </TableRow>
                                         ))}

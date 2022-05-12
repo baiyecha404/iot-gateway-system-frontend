@@ -31,6 +31,7 @@ export default function UserInfo(props) {
                 setShouldUpdate(false);
             })
         }
+        return () => setShouldUpdate(false);
     }, [userId, shouldUpdate])
 
 

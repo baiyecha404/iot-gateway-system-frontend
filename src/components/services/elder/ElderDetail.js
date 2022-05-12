@@ -6,21 +6,24 @@ import {
 } from "@mui/material";
 import { TabList, TabContext, TabPanel } from "@mui/lab";
 import EditIcon from '@mui/icons-material/Edit';
-import ElderInfo from "./ElderInfo";
-import ElderLocation from "./ElderLocation";
-import ElderLog from "./ElderLog";
 import ElderService from '../../../api/Elder';
+import ElderInfo from "./ElderInfo";
+import ElderLog from "./ElderLog";
 import ElderNotification from "./ElderNotification";
+import ElderEditInfo from "./ElderEditInfo";
+import ElderStatus from "./ElderStatus";
 
 export default function ElderDetail(props) {
     const { elderId } = props
     const { tab } = useParams();
     const [info, setInfo] = useState({})
+    const [shouldUpdate, setShouldUpdate] = useState(true)
+    const [devices, setDevices] = useState([]);
     const [currentTab, setCurrentTab] = useState("info");
     const navigate = useNavigate()
 
     useEffect(() => {
-        const tabs = ["info", "location", "logs", "notification"];
+        const tabs = ["info", "logs", "status", "notification", "edit"];
         if (tab && tabs.includes(tab)) {
             setCurrentTab(tab);
         }
@@ -28,12 +31,25 @@ export default function ElderDetail(props) {
 
 
     useEffect(() => {
-        ElderService.getElderInfo(elderId).then(resp => {
-            if (resp.result) {
-                setInfo(resp.result);
-            }
-        })
-    }, [])
+        if (shouldUpdate) {
+            ElderService.getElderInfo(elderId).then(resp => {
+                if (resp.result) {
+                    setInfo(resp.result);
+                }
+            })
+                .then(() => {
+                    ElderService.getElderDevices(elderId).then(resp => {
+                        if (resp.result) {
+                            setDevices(resp.result);
+                        }
+                    })
+                })
+                .then(() => {
+                    setShouldUpdate(false);
+                })
+        }
+        return () => setShouldUpdate(false);
+    }, [elderId, shouldUpdate])
 
 
     const handleChange = (event, newValue) => {
@@ -95,6 +111,7 @@ export default function ElderDetail(props) {
                                                         color="primary"
                                                         variant="outlined"
                                                         sx={{ ml: 4, mr: 1 }}
+                                                        onClick={e => navigate(`/elder-caring/${elderId}/edit`, { replace: true })}
                                                     >
                                                         编辑
                                                     </Button>
@@ -123,22 +140,34 @@ export default function ElderDetail(props) {
                                     aria-label="secondary tabs example"
                                 >
                                     <Tab label="信息" value="info" />
-                                    <Tab label="位置" value="location" />
                                     <Tab label="记录" value="logs" />
+                                    <Tab label="状态" value="status" />
                                     <Tab label="通知" value="notification" />
+                                    <Tab value="edit" hidden={true} />
                                 </TabList>
                                 <TabPanel value="info">
-                                    <ElderInfo elderId={elderId}
-                                        info={info} />
-                                </TabPanel>
-                                <TabPanel value="location">
-                                    <ElderLocation elderId={elderId} />
+                                    <ElderInfo
+                                        elderId={elderId}
+                                        info={info}
+                                        devices={devices}
+                                        setUpdate={setShouldUpdate}
+                                    />
                                 </TabPanel>
                                 <TabPanel value="logs">
                                     <ElderLog />
                                 </TabPanel>
+                                <TabPanel value="status">
+                                    <ElderStatus devices={devices}/>
+                                </TabPanel>
                                 <TabPanel value="notification">
                                     <ElderNotification />
+                                </TabPanel>
+                                <TabPanel value="edit">
+                                    <ElderEditInfo
+                                        elderId={elderId}
+                                        setUpdate={setShouldUpdate}
+                                        info={info}
+                                    />
                                 </TabPanel>
                             </TabContext>
                         </Box>

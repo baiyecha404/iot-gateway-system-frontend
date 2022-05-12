@@ -16,15 +16,16 @@ export default function ChannelStatus(props) {
                 setMessages(resp.result)
             }
         })
+        return () => setMessages([]);
     }, [channelId])
 
 
     const renderChart = (deviceMessages) => {
-        console.log(deviceMessages)
 
         let showedMessages = deviceMessages;
+
         if (showedMessages.length > 10) {
-            showedMessages = showedMessages.slice(messages.length - 10, messages.length)
+            showedMessages = showedMessages.slice(deviceMessages.length - 10, deviceMessages.length)
         }
 
 
@@ -54,7 +55,6 @@ export default function ChannelStatus(props) {
                 const resultData = deviceMessages.map((message) => handleMessageData(message))
                 const dates = deviceMessages.map(message => message.created_at)
 
-
                 const option = {
                     title: {
                         text: '消息'
@@ -83,11 +83,6 @@ export default function ChannelStatus(props) {
                     },
                     yAxis: {
                         type: 'value',
-                        /*axisLabel: {
-                            formatter: function (value, index) {
-                                return value.toFixed(2);
-                            }
-                        } */
                     },
                     series: [
                         {
