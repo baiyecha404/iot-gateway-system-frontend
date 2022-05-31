@@ -20,7 +20,7 @@ export default function DevicePolicy(props) {
     const [dialogOpen, setDialogOpen] = useState(false);
     const navigate = useNavigate();
 
-    
+
     useEffect(() => {
         if (shouldUpdate) {
             DeviceService.getDevicePolicies(deviceId).then(resp => {
@@ -31,9 +31,7 @@ export default function DevicePolicy(props) {
                 setShouldUpdate(false)
             })
         }
-        return () => {
-            setShouldUpdate(false);
-        }
+        return () => setShouldUpdate(false);
     }, [shouldUpdate])
 
     const handleButtonClick = (event) => {
@@ -76,12 +74,12 @@ export default function DevicePolicy(props) {
                                 <TableCell>
                                     <Link underline="always" onClick={(e) => navigate(`/users/${subject}/info`, { replace: true })}>
                                         <Typography fontWeight="bold" variant="body2">
-                                        {subject}
+                                            {subject}
                                         </Typography>
                                     </Link>
                                 </TableCell>
                                 <TableCell>
-                                {Utils.groupBy(policies, "subject")[subject][0]["subject_name"]}
+                                    {Utils.groupBy(policies, "subject")[subject][0]["subject_name"]}
                                 </TableCell>
                                 <TableCell align="right">
                                     <Stack direction="row" spacing={1}>

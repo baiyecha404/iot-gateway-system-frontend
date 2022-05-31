@@ -10,6 +10,10 @@ export default function DeviceForm(props) {
         "protocol": "HTTP / HTTPs",
     },
     {
+        "value": "websocket connector",
+        "protocol": "WS / WSS",
+    },
+    {
         "value": "mqtt connector",
         "protocol": "MQTT",
     },

@@ -11,7 +11,7 @@ import Utils from "../../../utils/Utils";
 
 export default function LivingRoomMonitor() {
     const hlsUrl = "http://d3rlna7iyyu8wu.cloudfront.net/skip_armstrong/skip_armstrong_stereo_subs.m3u8";
-
+    const downloadUrl = "https://www.learningcontainer.com/wp-content/uploads/2020/05/sample-mp4-file.mp4";
     const logs = [
         { "id": "1", "action": "摔倒", "level": "warning", "time": "2020-05-05 12:12:12" },
         { "id": "2", "action": "坐下", "level": "normal", "time": "2020-05-05 12:43:06" }
@@ -19,10 +19,11 @@ export default function LivingRoomMonitor() {
     ];
 
     const videos = [
-        "living_room_monitor_2022_04_01.mp4",
-        "living_room_monitor_2022_04_02.mp4",
-        "living_room_monitor_2022_04_03.mp4",
+        "living_room_monitor_5a27e438-ff65-4cd8-b81c-9078c697f78d_2022_04_01.mp4",
+        "living_room_monitor_5a27e438-ff65-4cd8-b81c-9078c697f78d_2022_04_02.mp4",
+        "living_room_monitor_5a27e438-ff65-4cd8-b81c-9078c697f78d_2022_04_03.mp4",
     ];
+
     const [video, setVideo] = useState(videos[0]);
 
     const handleExportLog = (event) => {
@@ -33,6 +34,15 @@ export default function LivingRoomMonitor() {
             fileType: 'text/json',
         })
     }
+
+    const handleVideoDownload = (event) => {
+        event.preventDefault();
+        Utils.downloadFileByUrl({
+            url: downloadUrl, 
+            fileName: video
+        });
+    }
+
 
     return (
         <React.Fragment>
@@ -69,9 +79,10 @@ export default function LivingRoomMonitor() {
                     <Button
                         startIcon={(<DownloadIcon fontSize="small" />)}
                         sx={{ mr: 1 }}
+                        onClick={handleVideoDownload}
                         variant="contained"
                     >
-                        Export Video
+                        View Video
                     </Button>
                 </Box>
             </Box>

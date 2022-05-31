@@ -12,7 +12,6 @@ import Utils from "../../utils/Utils";
 export default function MonitorList(props) {
     const [isCheckAll, setIsCheckAll] = useState(false);
     const [isCheck, setIsCheck] = useState([]);
-    //const [monitors, setMonitors] = useState([]);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const navigate = useNavigate();

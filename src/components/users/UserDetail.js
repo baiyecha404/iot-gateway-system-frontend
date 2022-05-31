@@ -9,7 +9,6 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import UserInfo from './UserInfo';
 import UserPassword from './UserPassword';
 import UserLog from './UserLog';
-import UserAuthorization from "./UserAuthorization";
 
 export default function UserDetail(props) {
     const { userId } = props;
@@ -20,7 +19,7 @@ export default function UserDetail(props) {
 
 
     useEffect(() => {
-        const tabs = ["info", "password", "log", "authorization"];
+        const tabs = ["info", "password", "log"];
         if (tab && tabs.includes(tab)) {
             setCurrentTab(tab);
         }
@@ -81,7 +80,6 @@ export default function UserDetail(props) {
                                     <Tab label="信息" value="info" />
                                     <Tab label="密码" value="password" />
                                     <Tab label="日志" value="log" />
-                                    <Tab label="授权" value="authorization" />
                                 </TabList>
                                 <TabPanel value="info">
                                     <UserInfo userId={userId} />
@@ -91,9 +89,6 @@ export default function UserDetail(props) {
                                 </TabPanel>
                                 <TabPanel value="log">
                                     <UserLog userId={userId} />
-                                </TabPanel>
-                                <TabPanel value="authorization">
-                                    <UserAuthorization userId={userId} />
                                 </TabPanel>
                             </TabContext>
                         </CardContent>

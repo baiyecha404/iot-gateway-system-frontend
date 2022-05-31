@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
     Grid, Card, CardContent, CardHeader, Typography, List, ListItem, ListItemText, Divider, MenuItem,
-    TextField
+    TextField, Link
 } from '@mui/material';
 import ReactECharts from "echarts-for-react";
 import ChannelMapStatus from '../../channel/ChannelMapStatus';
@@ -20,6 +21,7 @@ export default function ElderStatusCard(props) {
     const [attribute, setAttribute] = useState(originialAttribute);
     const [messages, setMessages] = useState([]);
     const [attributeMessages, setAttributeMessages] = useState([]);
+    const navigate = useNavigate();
 
     useEffect(() => {
         DeviceService.getDeviceMessages(deviceId).then(resp => {
@@ -41,10 +43,20 @@ export default function ElderStatusCard(props) {
         const len = messages.length;
         if (len) {
             let data = JSON.parse(messages[len - 1].data);
-            console.log(data)
-            return data.data
+            return `${data.data} ${data.unit ? data.unit : ""}`
         }
     }
+
+    const getAttributeChannel = (messages) => {
+        const len = messages.length
+        if (len) {
+            let channelId = messages[len - 1].channel_id;
+            return (<Link onClick={e => navigate(`/channels/${channelId}/messages`, { reaplce: true })} underline="always">
+                {channelId}
+            </Link>)
+        }
+    }
+
 
     const renderChart = (deviceMessages) => {
 
@@ -146,12 +158,13 @@ export default function ElderStatusCard(props) {
                     <Grid container spacing={3}>
                         <Grid item md={6} xs={12}>
                             <TextField
-                                id="type"
-                                label="Type"
+                                id={`${deviceId}-attribute`}
+                                label="Attributes"
                                 fullWidth
                                 select
                                 value={attribute.identifier}
                                 onChange={handleSelectedAttribute}
+                                placeholder="Select attribute"
                             >
                                 {attributeMessages.map((attr) => (
                                     <MenuItem key={attr.identifier} value={attr.identifier}>
@@ -186,6 +199,11 @@ export default function ElderStatusCard(props) {
                                 <ListItem sx={{ py: 1, px: 0, width: 420 }}>
                                     <ListItemText primary={<Typography variant="body2" fontWeight="bold">描述</Typography>} />
                                     <Typography variant="body2">{attribute.definition}</Typography>
+                                </ListItem>
+                                <Divider />
+                                <ListItem sx={{ py: 1, px: 0, width: 420 }}>
+                                    <ListItemText primary={<Typography variant="body2" fontWeight="bold">信道</Typography>} />
+                                    <Typography variant="body2">{getAttributeChannel(attribute.messages)}</Typography>
                                 </ListItem>
                                 <Divider />
                                 <ListItem sx={{ py: 1, px: 0, width: 360 }}>

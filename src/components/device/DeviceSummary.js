@@ -16,13 +16,15 @@ export default function DeviceSummary(props) {
             uri = `amqp://${auth}${info.host}:${info.port}/`;
         } else if (info.connector.includes("ftp")) {
             uri = `ftp://${auth}${info.host}:${info.port}/`;
+        } else if (info.connector.includes("websocket")) {
+            uri = `http://${auth}${info.host}:${info.port}/`;
         }
         return uri;
     }
 
     useEffect(() => {
         setInfo({ ...info, connect_uri: buildConnectUri(info) });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
 

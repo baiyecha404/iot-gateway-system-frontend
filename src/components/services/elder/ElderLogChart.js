@@ -5,7 +5,8 @@ import ReactECharts from "echarts-for-react";
 export default function ElderLogChart(props) {
 
     const { logs } = props;
-    const NormalNum = logs.filter((log) => log.level === "normal").length
+    const normalNum = logs.filter((log) => log.severity === "normal").length
+    const warningNum = logs.filter((log) => log.severity === "warning").length
 
     const option = {
         title: {
@@ -22,13 +23,14 @@ export default function ElderLogChart(props) {
         },
         series: [
             {
-                color: ['#4caf50', '#d14343'],
+                color: ['#4caf50', '#ffb020', '#d14343'],
                 name: 'Log Data',
                 type: 'pie',
                 radius: '50%',
                 data: [
-                    { value: NormalNum, name: 'Normal' },
-                    { value: logs.length - NormalNum, name: 'Warning' },
+                    { value: normalNum, name: 'Normal' },
+                    { value: warningNum, name: 'Warning' },
+                    { value: logs.length - normalNum - warningNum, name: 'Error' },
                 ],
                 emphasis: {
                     itemStyle: {

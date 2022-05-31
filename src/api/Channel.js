@@ -142,9 +142,25 @@ const deleteConnection = (channel_id, device_id) => {
     })
 }
 
-const startCronJob = (channel_id, device_id) => {
-    return axios.post(`${API_URL}/gateway/channels/${channel_id}/cron/start`, {
-        device_id,
+const startCronJob = (channel_id, device_id, attribute, duration) => {
+    return axios.post(`${API_URL}/gateway/channels/${channel_id}/startCron`, {
+        device_id, attribute, duration
+    }, {
+        headers: AuthService.getAuthHeader()
+    }).then(resp => {
+
+        if (resp.data.result) {
+            return { result: resp.data.result }
+        }
+    }).catch(err => {
+        console.log(err);
+        return { err: err.message }
+    })
+}
+
+const getCronJobs = (channel_id, device_id) => {
+    return axios.post(`${API_URL}/gateway/channels/${channel_id}/cronJobs`, {
+        device_id
     }, {
         headers: AuthService.getAuthHeader()
     }).then(resp => {
@@ -159,10 +175,9 @@ const startCronJob = (channel_id, device_id) => {
 }
 
 
-const stopCronJob = (channel_id, task_id) => {
-    // TODO: implement in backend, store task_id in local storage
-    return axios.post(`${API_URL}/gateway/channels/${channel_id}/cron/stop`, {
-        task_id,
+const stopCronJob = (channel_id, device_id, task_id) => {
+    return axios.post(`${API_URL}/gateway/channels/${channel_id}/stopCron`, {
+        device_id, task_id,
     }, {
         headers: AuthService.getAuthHeader()
     }).then(resp => {
@@ -225,6 +240,7 @@ export default {
     deleteConnection,
     sendMessage,
     startCronJob,
+    getCronJobs,
     stopCronJob,
     getMessages
 }

@@ -10,6 +10,7 @@ import Utils from "../../../utils/Utils";
 
 export default function DoorMonitor() {
     const hlsUrl = "http://d3rlna7iyyu8wu.cloudfront.net/skip_armstrong/skip_armstrong_stereo_subs.m3u8";
+    const downloadUrl = "https://www.learningcontainer.com/wp-content/uploads/2020/05/sample-mp4-file.mp4";
 
     const logs = [
         { "id": "1", "action": "出门", "level": "normal", "time": "2020-05-05 12:12:12" },
@@ -34,6 +35,14 @@ export default function DoorMonitor() {
             fileName: 'door-logs.export.json',
             fileType: 'text/json',
         })
+    }
+
+    const handleVideoDownload = (event) => {
+        event.preventDefault();
+        Utils.downloadFileByUrl({
+            url: downloadUrl, 
+            fileName: video
+        });
     }
 
     return (
@@ -72,8 +81,9 @@ export default function DoorMonitor() {
                         startIcon={(<DownloadIcon fontSize="small" />)}
                         sx={{ mr: 1 }}
                         variant="contained"
+                        onClick={handleVideoDownload}
                     >
-                        Export Video
+                        View Video
                     </Button>
                 </Box>
             </Box>

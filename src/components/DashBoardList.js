@@ -1,7 +1,6 @@
 import React, { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { ListItemButton, ListItemIcon, ListItemText, Divider, Collapse, List } from '@mui/material';
-import HomeIcon from '@mui/icons-material/Home';
 import AccountBoxIcon from '@mui/icons-material/AccountBox';
 import DeviceHubIcon from '@mui/icons-material/DeviceHub';
 import SettingsIcon from '@mui/icons-material/Settings';
@@ -10,6 +9,7 @@ import ExpandMore from '@mui/icons-material/ExpandMore';
 import DevicesIcon from '@mui/icons-material/Devices';
 import LooksIcon from '@mui/icons-material/Looks';
 import DevicesOtherIcon from '@mui/icons-material/DevicesOther';
+import AccessibleIcon from '@mui/icons-material/Accessible';
 
 export default function ListItems(props) {
 
@@ -112,7 +112,7 @@ export default function ListItems(props) {
             </Collapse>
             <ListItemButton ref={elderEl} onClick={handlePageClick}>
                 <ListItemIcon>
-                    <DevicesIcon sx={{ fontSize: 30 }} />
+                    <AccessibleIcon sx={{ fontSize: 30 }} />
                 </ListItemIcon>
                 <ListItemText primary="Elder Caring" />
             </ListItemButton>

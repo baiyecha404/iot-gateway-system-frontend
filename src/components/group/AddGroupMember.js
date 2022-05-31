@@ -19,6 +19,7 @@ export default function AddGroupMember(props) {
                 setUsers(resp.result);
             }
         })
+        return () => setUsers([]);
     }, [])
 
     const handleAddMember = (event) => {

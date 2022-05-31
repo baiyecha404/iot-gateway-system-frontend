@@ -15,13 +15,14 @@ export default function Account(props) {
     const [username, setUserName] = useState("")
     const [phoneNumber, setPhoneNumber] = useState("")
     const [logs, setLogs] = useState([]);
-    const [info, setInfo] = useState({
+    const originalInfo = {
         "username": "",
         "user_id": "",
         "role": "",
         "last_login": "",
         "is_admin": ""
-    })
+    }
+    const [info, setInfo] = useState(originalInfo)
 
 
     useEffect(() => {
@@ -40,6 +41,12 @@ export default function Account(props) {
                 })
             }
         })
+        return () => {
+            setInfo(originalInfo)
+            setUserName("")
+            setPhoneNumber("")
+            setLogs([])
+        }
     }, [])
 
     const validateUserName = (username) => {

@@ -73,6 +73,19 @@ const getElderDevices = (elder_id) => {
 }
 
 
+const getElderLogs = (elder_id) => {
+    return axios.get(`${API_URL}/elders/${elder_id}/logs`, {
+        headers: AuthService.getAuthHeader()
+    }).then(resp => {
+        if (resp.data.result) {
+            return { result: resp.data.result }
+        }
+    }).catch(err => {
+        console.log(err);
+        return { err: err.message }
+    })
+}
+
 const bindElderDevice = (elder_id, device_id) => {
     return axios.post(`${API_URL}/elders/${elder_id}/devices`, {
         device_id
@@ -97,5 +110,6 @@ export default {
     updateElderInfo,
     searchElder,
     getElderDevices,
+    getElderLogs,
     bindElderDevice
 }

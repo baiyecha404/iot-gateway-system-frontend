@@ -22,6 +22,7 @@ export default function AddGroupPolicy(props) {
                 setUsers(resp.result);
             }
         })
+        return () => setUsers([]);
     }, [])
 
     const handleAddPolicy = (event) => {

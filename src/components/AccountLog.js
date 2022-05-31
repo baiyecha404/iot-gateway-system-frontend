@@ -3,6 +3,7 @@ import {
     Box, Table, TableBody, TableCell, TableRow, Card, CardHeader, CardContent, Typography, TableContainer,
     Chip, Divider, TablePagination
 } from "@mui/material";
+import Utils from "../utils/Utils";
 
 export default function AccountLogs(props) {
     const { logs } = props;
@@ -18,20 +19,6 @@ export default function AccountLogs(props) {
         setRowsPerPage(parseInt(event.target.value, 10));
         setPage(0);
     };
-
-
-    const parseSeverity = (severity) => {
-        switch (severity) {
-            case "normal":
-                return "success";
-            case "warning":
-                return "warning"
-            case "danger":
-                return "error"
-            default:
-                break
-        }
-    }
 
     return (
         <React.Fragment>
@@ -61,7 +48,7 @@ export default function AccountLogs(props) {
                                             <TableCell>
                                                 <Chip
                                                     label={<Typography variant="body2" fontWeight="bold">{log.severity}</Typography>}
-                                                    color={parseSeverity(log.severity)}
+                                                    color={Utils.parseSeverity(log.severity)}
                                                 />
                                             </TableCell>
                                             <TableCell>{log.action}</TableCell>

@@ -25,6 +25,7 @@ export default function Users() {
                 setUsers(resp.result);
             }
         })
+        return () => setUsers([]);
     }, [])
 
     const handleSelectAll = (event) => {
@@ -83,7 +84,7 @@ export default function Users() {
                     <Box sx={{ mt: 3 }}>
                         <Card>
                             <CardHeader
-                                title="All Users"
+                                title="用户"
                                 action={
                                     <React.Fragment>
                                         <Box

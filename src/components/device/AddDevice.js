@@ -41,7 +41,6 @@ export default function AddNewDevice() {
 
     const handlePrev = () => {
         setActiveStep(activeStep - 1);
-
     }
 
 

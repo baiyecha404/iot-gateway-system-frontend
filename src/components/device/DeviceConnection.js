@@ -35,6 +35,7 @@ export default function DeviceConnection(props) {
                 setShouldUpdate(false);
             })
         }
+        return () => setShouldUpdate(false);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [deviceId, shouldUpdate])
 
@@ -48,6 +49,7 @@ export default function DeviceConnection(props) {
                 setError(resp.err);
             }
         })
+        return () => setChannels([])
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 

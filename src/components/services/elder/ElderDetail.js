@@ -154,10 +154,10 @@ export default function ElderDetail(props) {
                                     />
                                 </TabPanel>
                                 <TabPanel value="logs">
-                                    <ElderLog />
+                                    <ElderLog elderId={elderId} />
                                 </TabPanel>
                                 <TabPanel value="status">
-                                    <ElderStatus devices={devices}/>
+                                    <ElderStatus devices={devices} />
                                 </TabPanel>
                                 <TabPanel value="notification">
                                     <ElderNotification />

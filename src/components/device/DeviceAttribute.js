@@ -37,6 +37,7 @@ export default function DeviceAttribute(props) {
                 setShouldUpdate(false);
             })
         }
+        return () => setShouldUpdate(false);
     }, [deviceId, shouldUpdate])
 
 

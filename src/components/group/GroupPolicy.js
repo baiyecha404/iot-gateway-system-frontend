@@ -28,9 +28,7 @@ export default function GroupPolicy(props) {
                 setShouldUpdate(false);
             })
         }
-        return () => {
-            setShouldUpdate(false);
-        }
+        return () => setShouldUpdate(false);
     }, [shouldUpdate])
 
     const handleButtonClick = (event) => {

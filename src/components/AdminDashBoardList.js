@@ -13,6 +13,7 @@ import DevicesIcon from '@mui/icons-material/Devices';
 import LooksIcon from '@mui/icons-material/Looks';
 import GroupsIcon from '@mui/icons-material/Groups';
 import AutoAwesomeMotionIcon from '@mui/icons-material/AutoAwesomeMotion';
+import AccessibleIcon from '@mui/icons-material/Accessible';
 
 export default function AdminListItems(props) {
 
@@ -174,7 +175,7 @@ export default function AdminListItems(props) {
                 <List component="div" disablePadding>
                     <ListItemButton ref={elderEl} sx={{ pl: 4 }} onClick={handlePageClick}>
                         <ListItemIcon>
-                            <DevicesIcon sx={{ fontSize: 20 }} />
+                            <AccessibleIcon sx={{ fontSize: 20 }} />
                         </ListItemIcon>
                         <ListItemText primary="Elder Caring" />
                     </ListItemButton>

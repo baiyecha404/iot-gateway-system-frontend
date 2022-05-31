@@ -8,17 +8,39 @@ import {
 } from "@mui/material";
 import CommentIcon from '@mui/icons-material/Comment';
 import DevicesIcon from '@mui/icons-material/Devices';
+import AlarmOffIcon from '@mui/icons-material/AlarmOff';
 import MoreTimeOutlinedIcon from '@mui/icons-material/MoreTimeOutlined';
 import ChannelService from '../../api/Channel';
 import DeviceService from '../../api/Device';
 import Utils from "../../utils/Utils";
 
+
+const timeUnits = [
+    { value: 1, label: "秒" },
+    { value: 60, label: "分" },
+    { value: 3600, label: "小时" },
+    { value: 86400, label: "天" },
+]
+
+const actions = ["ping", "get", "set", "on/off", "control"];
+
 export default function ChannelMessage(props) {
     const { channelId } = props;
     const { setSuccess, setError } = useContext(MessageContext)
-    const actions = ["ping", "get", "set", "on/off", "control"];
     const [isSelected, setIsSelected] = useState("");
     const [dialogOpen, setDialogOpen] = useState(false);
+
+    // add cron job
+    const [startCronForm, setStartCronForm] = useState(false);
+    const [cronAttribute, setCronAttribute] = useState("");
+    const [cronDuration, setCronDuration] = useState(10);
+    const [cronDurationUnit, setCronDurationUnit] = useState(1);
+
+    // stop cron job
+    const [stopCronForm, setStopCronForm] = useState(false);
+    const [tasks, setTasks] = useState([]);
+    const [taskId, setTaskId] = useState("");
+
     const [deviceAttributes, setDeviceAttributes] = useState([]);
     const [senders, setSenders] = useState(["all"]);
     const [connections, setConnections] = useState([])
@@ -38,6 +60,7 @@ export default function ChannelMessage(props) {
                 setConnections(resp.result);
             }
         })
+        return () => setConnections([]);
     }, [channelId])
 
 
@@ -57,8 +80,9 @@ export default function ChannelMessage(props) {
     useEffect(() => {
         const allSenders = Object
             .keys(Utils.groupBy(messages, "sender"))
-            .concat(senders)
+            .concat(["all"])
         setSenders(allSenders)
+        return () => setSenders([]);
     }, [messages])
 
 
@@ -95,8 +119,49 @@ export default function ChannelMessage(props) {
         })
     }
 
-    const startCronJob = (device_id) => {
-        ChannelService.startCronJob(channelId, device_id).then(resp => {
+    const handleCronStartForm = (device_id) => {
+        DeviceService.getDeviceAttributes(device_id).then(resp => {
+            if (resp.result) {
+                setDeviceAttributes(resp.result);
+            }
+        }).then(() => {
+            setStartCronForm(true);
+        })
+    }
+
+    const handleCronStopForm = (device_id) => {
+        ChannelService.getCronJobs(channelId, device_id).then(resp => {
+            if (resp.result) {
+                setTasks(resp.result);
+            }
+        }).then(() => {
+            setStopCronForm(true);
+        })
+    }
+
+    const handleCronJobStart = (device_id) => {
+        setStartCronForm(false);
+        ChannelService
+            .startCronJob(channelId, device_id, cronAttribute,
+                parseInt(cronDuration) * cronDurationUnit).then(resp => {
+                    if (resp.result) {
+                        setSuccess("Cron job started successfully");
+                        return true;
+                    }
+                    if (resp.err) {
+                        setError(resp.err);
+                    }
+                }).then(res => {
+                    if (res) {
+                        setShouldUpdate(true);
+                    }
+                })
+    }
+
+
+    const handleCronJobStop = (device_id) => {
+        setStopCronForm(false);
+        ChannelService.stopCronJob(channelId, device_id, taskId).then(resp => {
             if (resp.result) {
                 setSuccess("Cron job started successfully");
                 return true;
@@ -120,8 +185,8 @@ export default function ChannelMessage(props) {
                 wrap="wrap"
             >
                 <Grid
-                    md={4}
-                    sm={4}
+                    md={5}
+                    sm={5}
                     xs={12}
                     sx={{
                         display: 'flex',
@@ -129,156 +194,241 @@ export default function ChannelMessage(props) {
                     }}
                     item>
                     <Box>
-                        <List
-                            sx={{
-                                width: '100%', maxWidth: 400, maxHeight: 200, bgcolor: 'background.paper',
-                                overflow: 'auto',
-                            }}
-                            subheader={
-                                <ListSubheader>
-                                    <Typography variant="h6">连接</Typography>
-                                </ListSubheader>}
-                        >
-                            {connections.length === 0 && <ListItemButton
-                            >                                     <ListItemText
-                                    primary={<Typography variant="h6">没有连接</Typography>}
-                                />
+                        {connections.length === 0 ?
+                            <Grid
+                                container
+                                spacing={0}
+                                sx={{ my: 5 }}
+                                direction="column"
+                                alignItems="center"
+                                justifyContent="center"
+                            >
+                                <Typography variant="h6">没有连接</Typography>
+                            </Grid>
+                            :
+                            <List
+                                sx={{
+                                    width: '100%', maxWidth: 400, maxHeight: 200, bgcolor: 'background.paper',
+                                    overflow: 'auto',
+                                }}
+                                subheader={
+                                    <ListSubheader>
+                                        <Typography variant="h6">连接</Typography>
+                                    </ListSubheader>}
+                            >
+                                {connections.map((connection) => (
+                                    <div key={connection.device_id}>
+                                        <ListItemButton
+                                            onClick={e => handleConnectionClick(connection.device_id)}
+                                            selected={isSelected === connection.device_id}
+                                        >
+                                            <ListItemText
+                                                primary={connection.device}
+                                                secondary={connection.device_id}
+                                                onClick={e => navigate(`/devices/${connection.device_id}/connection`, { replace: true })}
+                                            />
+                                            <Box sx={{
+                                                display: 'flex',
+                                                justifyContent: 'flex-end',
+                                            }}>
+                                                <IconButton aria-label="messages" edge="end"
+                                                    onClick={e => handleMessageForm(connection.device_id)}>
+                                                    <CommentIcon sx={{ width: 24, height: 24 }} />
+                                                </IconButton>
+                                                <IconButton aria-label="start-cronjob" edge="end"
+                                                    onClick={e => handleCronStartForm(connection.device_id)}>
+                                                    <MoreTimeOutlinedIcon sx={{ width: 24, height: 24 }} />
+                                                </IconButton>
+                                                <IconButton aria-label="stop-cronjob" edge="end"
+                                                    onClick={e => handleCronStopForm(connection.device_id)}
+                                                >
+                                                    <AlarmOffIcon sx={{ width: 24, height: 24 }} />
+                                                </IconButton>
+                                            </Box>
+                                        </ListItemButton>
+                                        <Dialog open={startCronForm} onClose={e => setStartCronForm(false)}
+                                            fullWidth
+                                            maxWidth={'sm'}>
+                                            <DialogTitle>Start CronJobs</DialogTitle>
+                                            <DialogContent>
+                                                <DialogContentText>
+                                                    请选择属性与定时任务时间
+                                                </DialogContentText>
+                                                <Grid container wrap="wrap" spacing={3}>
+                                                    <Grid xs={12} item>
+                                                        <TextField
+                                                            id="attribute"
+                                                            margin="dense"
+                                                            label="Attribute"
+                                                            fullWidth
+                                                            select
+                                                            variant="standard"
+                                                            value={cronAttribute}
+                                                            onChange={e => setCronAttribute(e.target.value)}
+                                                        >
+                                                            {deviceAttributes.map((attr) => (
+                                                                <MenuItem key={attr.identifier} value={attr.identifier}>
+                                                                    {attr.name} ( {attr.identifier} )
+                                                                </MenuItem>
+                                                            ))}
+                                                        </TextField>
+                                                    </Grid>
+                                                    <Grid xs={12} item>
+                                                        <TextField
+                                                            id="duration"
+                                                            margin="dense"
+                                                            label="Duration"
+                                                            fullWidth
+                                                            variant="standard"
+                                                            value={cronDuration}
+                                                            onChange={e => setCronDuration(e.target.value)}
+                                                        />
+                                                    </Grid>
+                                                    <Grid xs={12} item>
+                                                        <TextField
+                                                            id="duration-unit"
+                                                            margin="dense"
+                                                            label="Unit"
+                                                            select
+                                                            fullWidth
+                                                            variant="standard"
+                                                            value={cronDurationUnit}
+                                                            onChange={e => setCronDurationUnit(e.target.value)}
+                                                        >
+                                                            {timeUnits.map((unit) => (
+                                                                <MenuItem key={unit.label} value={unit.value}>
+                                                                    {unit.label}
+                                                                </MenuItem>
+                                                            ))}
 
-                            </ListItemButton>}
-                            {connections.map((connection) => (
-                                <div key={connection.device_id}>
-                                    <ListItemButton
-                                        onClick={e => handleConnectionClick(connection.device_id)}
-                                        selected={isSelected === connection.device_id}
-                                    >
-                                        <ListItemText
-                                            primary={connection.device}
-                                            secondary={connection.device_id}
-                                            onClick={e => navigate(`/devices/${connection.device_id}`, { replace: true })}
-                                        />
-                                        <IconButton aria-label="cronjob"
-                                            onClick={e => startCronJob(connection.device_id)}>
-                                            <MoreTimeOutlinedIcon />
-                                        </IconButton>
-                                        <IconButton edge="end" aria-label="comments"
-                                            onClick={e => handleMessageForm(connection.device_id)}>
-                                            <CommentIcon />
-                                        </IconButton>
-                                    </ListItemButton>
-                                    <Dialog open={dialogOpen} onClose={e => setDialogOpen(false)}
-                                        fullWidth
-                                        maxWidth={'sm'}>
-                                        <DialogTitle>Send Messages</DialogTitle>
-                                        <DialogContent>
-                                            <DialogContentText>
-                                                请选择你要发送的消息,或自定义消息
-                                            </DialogContentText>
-                                            <Grid container wrap="wrap" spacing={3}>
-                                                <Grid xs={12} item>
-                                                    <TextField
-                                                        id="type"
-                                                        margin="dense"
-                                                        label="Type"
-                                                        fullWidth
-                                                        select
-                                                        variant="standard"
-                                                        value={message.attribute}
-                                                        onChange={e => setMessage({ ...message, attribute: e.target.value })}
-                                                    >
-                                                        {deviceAttributes.map((attr) => (
-                                                            <MenuItem key={attr.identifier} value={attr.identifier}>
-                                                                {attr.name} ( {attr.identifier} )
-                                                            </MenuItem>
-                                                        ))}
-                                                    </TextField>
+                                                        </TextField>
+                                                    </Grid>
                                                 </Grid>
-                                                <Grid xs={12} item>
-                                                    <TextField
-                                                        autoFocus
-                                                        margin="dense"
-                                                        select
-                                                        id="msg-type"
-                                                        label="Action Type"
-                                                        fullWidth
-                                                        variant="standard"
-                                                        value={message.action}
-                                                        onChange={e => setMessage({ ...message, action: e.target.value })}
-                                                    >
-                                                        {actions.map((action) => (
-                                                            <MenuItem key={action} value={action}>
-                                                                {action}
-                                                            </MenuItem>
-                                                        ))}
-                                                    </TextField>
+                                            </DialogContent>
+                                            <DialogActions>
+                                                <Button onClick={e => setStartCronForm(false)}>Cancel</Button>
+                                                <Button onClick={e => handleCronJobStart(connection.device_id)}>Start Cron Job</Button>
+                                            </DialogActions>
+                                        </Dialog>
+                                        <Dialog open={stopCronForm} onClose={e => setStopCronForm(false)}
+                                            fullWidth
+                                            maxWidth={'sm'}>
+                                            <DialogTitle>Stop CronJobs</DialogTitle>
+                                            <DialogContent>
+                                                <DialogContentText>
+                                                    正在进行的定时任务
+                                                </DialogContentText>
+                                                <Grid container wrap="wrap" spacing={3}>
+                                                    <Grid xs={12} item>
+                                                        <TextField
+                                                            id="tasks"
+                                                            margin="dense"
+                                                            label="Tasks"
+                                                            fullWidth
+                                                            select
+                                                            variant="standard"
+                                                            value={taskId}
+                                                            onChange={e => setTaskId(e.target.value)}
+                                                        >
+                                                            {tasks.map((task) => (
+                                                                <MenuItem key={task} value={task}>
+                                                                    {task}
+                                                                </MenuItem>
+                                                            ))}
+                                                        </TextField>
+                                                    </Grid>
                                                 </Grid>
-                                                <Grid xs={12} item>
-                                                    <TextField
-                                                        id="value"
-                                                        margin="dense"
-                                                        label="Value"
-                                                        fullWidth
-                                                        variant="standard"
-                                                        disabled={message.action === "ping" || message.action === "get" || message.action === "on/off"}
-                                                        value={message.value}
-                                                        onChange={e => setMessage({ ...message, value: e.target.value })}
-                                                    />
+                                            </DialogContent>
+                                            <DialogActions>
+                                                <Button onClick={e => setStopCronForm(false)}>Cancel</Button>
+                                                <Button onClick={e => handleCronJobStop(connection.device_id)}>Stop Cron Job</Button>
+                                            </DialogActions>
+                                        </Dialog>
+                                        <Dialog open={dialogOpen} onClose={e => setDialogOpen(false)}
+                                            fullWidth
+                                            maxWidth={'sm'}>
+                                            <DialogTitle>Send Messages</DialogTitle>
+                                            <DialogContent>
+                                                <DialogContentText>
+                                                    请选择你要发送的消息,或自定义消息
+                                                </DialogContentText>
+                                                <Grid container wrap="wrap" spacing={3}>
+                                                    <Grid xs={12} item>
+                                                        <TextField
+                                                            id="attribute"
+                                                            margin="dense"
+                                                            label="Attribute"
+                                                            fullWidth
+                                                            select
+                                                            variant="standard"
+                                                            value={message.attribute}
+                                                            onChange={e => setMessage({ ...message, attribute: e.target.value })}
+                                                        >
+                                                            {deviceAttributes.map((attr) => (
+                                                                <MenuItem key={attr.identifier} value={attr.identifier}>
+                                                                    {attr.name} ( {attr.identifier} )
+                                                                </MenuItem>
+                                                            ))}
+                                                        </TextField>
+                                                    </Grid>
+                                                    <Grid xs={12} item>
+                                                        <TextField
+                                                            autoFocus
+                                                            margin="dense"
+                                                            select
+                                                            id="msg-type"
+                                                            label="Action Type"
+                                                            fullWidth
+                                                            variant="standard"
+                                                            value={message.action}
+                                                            onChange={e => setMessage({ ...message, action: e.target.value })}
+                                                        >
+                                                            {actions.map((action) => (
+                                                                <MenuItem key={action} value={action}>
+                                                                    {action}
+                                                                </MenuItem>
+                                                            ))}
+                                                        </TextField>
+                                                    </Grid>
+                                                    <Grid xs={12} item>
+                                                        <TextField
+                                                            id="value"
+                                                            margin="dense"
+                                                            label="Value"
+                                                            fullWidth
+                                                            variant="standard"
+                                                            disabled={message.action === "ping" || message.action === "get" || message.action === "on/off"}
+                                                            value={message.value}
+                                                            onChange={e => setMessage({ ...message, value: e.target.value })}
+                                                        />
+                                                    </Grid>
                                                 </Grid>
-                                            </Grid>
-                                        </DialogContent>
-                                        <DialogActions>
-                                            <Button onClick={e => setDialogOpen(false)}>Cancel</Button>
-                                            <Button onClick={e => handleMessageSent(connection.device_id)}>Send</Button>
-                                        </DialogActions>
-                                    </Dialog>
-                                </div>
-                            ))
-                            }
-                        </List>
+                                            </DialogContent>
+                                            <DialogActions>
+                                                <Button onClick={e => setDialogOpen(false)}>Cancel</Button>
+                                                <Button onClick={e => handleMessageSent(connection.device_id)}>Send</Button>
+                                            </DialogActions>
+                                        </Dialog>
+                                    </div>
+                                ))}
+                            </List>
+                        }
                     </Box>
                 </Grid>
                 <Grid
                     item
-                    md={8}
-                    sm={8}
+                    md={7}
+                    sm={7}
                     sx={{
                         display: 'flex',
                         flexDirection: 'column'
                     }}
                     xs={12}
                 >
-                    <Box
-                        sx={{
-                            alignItems: 'center',
-                            display: 'flex',
-                            justifyContent: 'space-between',
-                            flexWrap: 'wrap',
-                        }}
-                    >
-                        <Box>
-                            <Typography variant="h6">发送者</Typography>
-                        </Box>
-                        <Box>
-                            <TextField
-                                select
-                                id="outlined-select-senders"
-                                value={sender}
-                                onChange={e => setSender(e.target.value)}
-                                sx={{
-                                    width: 400,
-                                }}
-                            >
-                                {senders.map((sender) => (
-                                    <MenuItem key={sender} value={sender}>
-                                        {sender}
-                                    </MenuItem>
-                                ))}
-                            </TextField>
-                        </Box>
-                    </Box>
                     <List
                         sx={{
-                            width: '100%', maxWidth: 800, maxHeight: 300, bgcolor: 'background.paper',
-                            overflow: 'auto', my: 3
+                            width: '100%', maxWidth: 800, maxHeight: 360, bgcolor: 'background.paper',
+                            overflow: 'auto'
                         }}
                         subheader={
                             <ListSubheader> <Typography variant="h6">消息</Typography></ListSubheader>
@@ -326,11 +476,31 @@ export default function ChannelMessage(props) {
                     </List>
                     <Box
                         sx={{
+                            alignItems: 'center',
                             display: 'flex',
                             justifyContent: 'flex-end',
-                            p: 2
+                            flexWrap: 'wrap',
+                            my: 3
                         }}
                     >
+                        <Box sx={{ mr: 5 }}>
+                            <TextField
+                                select
+                                label="发送者"
+                                id="outlined-select-senders"
+                                value={sender}
+                                onChange={e => setSender(e.target.value)}
+                                sx={{
+                                    width: 400,
+                                }}
+                            >
+                                {senders.map((sender) => (
+                                    <MenuItem key={sender} value={sender}>
+                                        {sender}
+                                    </MenuItem>
+                                ))}
+                            </TextField>
+                        </Box>
                         <Button
                             color="primary"
                             variant="contained"

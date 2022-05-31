@@ -32,7 +32,7 @@ export default function Data() {
                                     color="textPrimary"
                                     variant="h4"
                                 >
-                                    0 / 2
+                                    1 / 5
                                 </Typography>
                             </Grid>
                             <Grid item>
@@ -74,7 +74,7 @@ export default function Data() {
                                     color="textPrimary"
                                     variant="h4"
                                 >
-                                    114
+                                    131
                                 </Typography>
                             </Grid>
                             <Grid item>
@@ -116,7 +116,7 @@ export default function Data() {
                                     color="textPrimary"
                                     variant="h4"
                                 >
-                                    514
+                                    15
                                 </Typography>
                             </Grid>
                             <Grid item>

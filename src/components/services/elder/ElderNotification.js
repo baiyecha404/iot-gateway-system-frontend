@@ -27,6 +27,7 @@ export default function ElderNotification() {
                                 display: 'flex',
                                 justifyContent: 'space-between',
                                 flexWrap: 'wrap',
+                                my: 3
                             }}
                         >
                             <Typography
@@ -56,6 +57,7 @@ export default function ElderNotification() {
                                 display: 'flex',
                                 justifyContent: 'space-between',
                                 flexWrap: 'wrap',
+                                my: 3
                             }}
                         >
                             <Typography

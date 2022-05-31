@@ -4,6 +4,7 @@ import { Map, Markers, InfoWindow } from 'react-amap';
 
 export default function ChannelMapStatus(props) {
     const { messages } = props;
+    
     let markersPosition = []
     let infoWindowPosition = {}
 

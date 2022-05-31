@@ -1,5 +1,5 @@
 import React from 'react';
-import {useNavigate} from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Box, Button, Container, Typography } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import notfound from '../assests/notfound.svg';
@@ -30,7 +30,7 @@ export default function NotFound() {
                         align="center"
                         color="textPrimary"
                         variant="h4"
-                        sx= {{ fontWeight: 'bold' }}
+                        sx={{ fontWeight: 'bold' }}
                     >
                         404: Page Not Found
                     </Typography>

@@ -38,6 +38,7 @@ export default function GroupList() {
                 setShouldUpdate(false);
             })
         }
+        return () => setShouldUpdate(false);
     }, [shouldUpdate])
 
 

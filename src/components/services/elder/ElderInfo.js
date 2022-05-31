@@ -3,12 +3,10 @@ import {
     Card, CardHeader, CardContent, List, ListItem, ListItemText, Typography, Divider,
     Table, TableHead, TableRow, TableCell, TableBody, Chip, Link, Button
 } from '@mui/material';
-//import ElderHealth from './ElderHealth';
-import ElderService from '../../../api/Elder';
 import ElderBindDevice from './ElderBindDevice';
 
 export default function ElderInfo(props) {
-    const { elderId, info, devices, update, setUpdate } = props;
+    const { elderId, info, devices, setUpdate } = props;
     const [open, setOpen] = useState(false);
 
     return (
@@ -42,15 +40,6 @@ export default function ElderInfo(props) {
                     </List>
                 </CardContent>
             </Card>
-            {/* <Card sx={{ my: 3 }}>
-                <CardHeader
-                    title="健康状况"
-                />
-                <Divider />
-                <CardContent>
-                    <ElderHealth />
-                </CardContent>
-            </Card> */}
             <Card sx={{ my: 3 }}>
                 <CardHeader
                     title="绑定设备"

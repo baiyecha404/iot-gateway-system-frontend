@@ -26,6 +26,7 @@ export default function Chart() {
                     { value: 235, name: '移动端' },
                     { value: 40, name: '平板' },
                 ],
+                color: ['#5048e5', '#10B981', '#ffb020'],
                 emphasis: {
                     itemStyle: {
                         shadowBlur: 10,

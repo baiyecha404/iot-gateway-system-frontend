@@ -12,6 +12,19 @@ const downloadFile = ({ data, fileName, fileType }) => {
     a.remove()
 }
 
+const downloadFileByUrl = ({ url, fileName }) => {
+    const a = document.createElement('a')
+    a.download = fileName
+    a.href = url;
+    const clickEvt = new MouseEvent('click', {
+        view: window,
+        bubbles: true,
+        cancelable: true,
+    })
+    a.dispatchEvent(clickEvt)
+    a.remove()
+}
+
 
 const groupBy =  (xs, key) => {
     return xs.reduce((rv, x) => {
@@ -20,10 +33,23 @@ const groupBy =  (xs, key) => {
     }, {});
 };
 
-
+const parseSeverity = (severity) => {
+    switch (severity) {
+        case "normal":
+            return "success";
+        case "warning":
+            return "warning"
+        case "danger":
+            return "error"
+        default:
+            break
+    }
+}
 
 // eslint-disable-next-line import/no-anonymous-default-export
 export default {
     downloadFile,
-    groupBy
+    downloadFileByUrl,
+    groupBy,
+    parseSeverity
 }

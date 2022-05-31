@@ -22,6 +22,7 @@ export default function AddDevicePolicy(props) {
                 setUsers(resp.result);
             }
         })
+        return () => setUsers([]);
     }, [])
 
     const handleAddPolicy = (event) => {

@@ -4,7 +4,6 @@ import Data from "./Data";
 import TrafficDevice from "./TrafficByDevice";
 import LastLogin from "./LastLogin";
 import Traffic from "./Traffic";
-//import UserService from "../../api/user";
 
 
 export default function Home() {

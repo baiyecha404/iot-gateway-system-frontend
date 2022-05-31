@@ -17,6 +17,7 @@ export default function UserLog(props) {
                 setLogs(resp.result);
             }
         })
+        return () => setLogs([]);
     }, [])
 
     const handleChangePage = (event, newPage) => {
@@ -69,7 +70,7 @@ export default function UserLog(props) {
                                             />
                                         </TableCell>
                                         <TableCell>{log.action}</TableCell>
-                                        <TableCell>{log.time}</TableCell>
+                                        <TableCell align="right">{log.time}</TableCell>
                                     </TableRow>
                                 ))}
                         </TableBody>
